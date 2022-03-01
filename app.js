@@ -6,14 +6,14 @@ const express = require("express");
 
 const ExpressError = require("./expressError");
 const cRoutes = require("./routes/companies");
-// const iRoutes = require("./routes/invoices");
+const iRoutes = require("./routes/invoices");
 const app = express();
 
 // Parse request bodies for JSON
 app.use(express.json());
 
 app.use("/companies", cRoutes);
-// app.use("/invoices", iRoutes);
+app.use("/invoices", iRoutes);
 
 /** 404 handler */
 
