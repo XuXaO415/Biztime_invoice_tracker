@@ -39,9 +39,9 @@ router.post("/", async(req, res, next) => {
 router.put("/:id", async(req, res, next) => {
     try {
         const { amt, paid, paid_date } = req.body;
-        const { id } = req.params;
+        // const { id } = req.params;
         const results = await db.query(
-            `UPDATE invoices SET amt=$1, paid=$2, paid_date=$3 WHERE id=$4 RETURNING id, comp_code, amt, paid, add_date, paid_date`, [id, amt, paid, paid_date]);
+            `UPDATE invoices SET amt=$1, paid=$2, paid_date=$3 WHERE id=$4 RETURNING id, amt, paid,  paid_date`, [req.params.id, amt, paid, paid_date]);
         if (results.rows.length === 0) {
             throw new ExpressError(`Invoice ${id} not found`, 404);
         }
@@ -57,7 +57,10 @@ router.delete("/:id", async(req, res, next) => {
 DELETE FROM invoices WHERE id = $1 `, [
             req.params.id
         ]);
-        return res.json({ msg: "Deleted" });
+        if (results.rows.length === 0) {
+            throw new ExpressError(`Invoice ${id} not found`, 404)
+        }
+        return res.json({ status: "Deleted" });
     } catch (e) {
         return next(e);
     }
