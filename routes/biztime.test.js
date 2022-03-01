@@ -3,16 +3,17 @@ const request = require('supertest');
 const app = require('../app');
 const db = require('../db');
 
-let testCompany
-beforeEach(async() => {
-    const result = await db.query('INSERT INTO companies (code, name) VALUES ("apple", "Apple", "Ruthless conglomerate") RETURNING code, name, description');
-    test = result.rows[0]
-})
+let testCompany;
+beforeEach(async function() {
+    const result = await db.query(`INSERT INTO companies(code, name, description) VALUES('
+                apple', 'Apple', 'blah blah') RETURNING  code, name, description`);
+    testCompany = result.rows[0];
+});
 
-afterEach(async() => {
-    await db.query(`DELETE FROM companies`);
-})
-afterAll(async() => {
+afterEach(async function() {
+    await db.query(`DELETE FROM companies `);
+});
+afterAll(async function() {
     await db.end();
 })
 
@@ -23,10 +24,24 @@ afterAll(async() => {
 //     })
 // })
 
-describe("GET /companies", () => {
-    test("Get a list with one company", async() => {
+describe("GET /companies", function() {
+    test("Get a list of one company", async function() {
         const res = await request(app).get('/companies')
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toEqual(200);
         expect(res.body).toEqual({ companies: [testCompany] })
-    })
-})
+    });
+});
+
+// describe("GET /companies/:code", function() {
+//     test("Get a single company", async function() {
+//         const res = await request(app).get(`/companies/${testCompany.code}`);
+//         expect(res.statusCode).toEqual(200);
+//         expect(res.body).toEqual({
+//             company: [testCompany]
+//         });
+//     });
+//     test("Responds with 404 if company is not found", async function() {
+//         const res = await request(app).get(`/companies/0`);
+//         expect(res.statusCode).toEqual(404);
+//     });
+// });
