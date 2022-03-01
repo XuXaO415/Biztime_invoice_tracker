@@ -38,34 +38,35 @@ router.get('/:code', async function(req, res, next) {
     }
 })
 
-// router.post('/', async(req, res, next) => {
-//     try {
-//         const { name, description } = req.body;
-//         const code = slugify(name, {
-//             // replacement: '-',
-//             // remove: '[^*+~.()!:@]\$',
-//             lower: true
-//         });
-//         const results = await db.query(`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description`, [code, name, description]);
-//         return res.status(201).json({ company: results.rows[0] })
-//     } catch (e) {
-//         return next(e)
-//     }
-// });
-
 router.post('/', async(req, res, next) => {
     try {
-        const results = await db.query(`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description`, [req.body.code, req.body.name, req.body.description]);
-        return res.status(201).json({ company: results.row[0] });
-    } catch (err) {
-        return next(err);
+        const { code, name, description } = req.body;
+        // const code = slugify(name, {
+        //     // replacement: '-',
+        //     // remove: '[^*+~.()!:@]\$',
+        //     lower: true
+        // });
+        const results = await db.query(`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description`, [code, name, description]);
+        return res.status(201).json({ company: results.rows[0] })
+    } catch (e) {
+        return next(e)
     }
 });
+
+// router.post('/', async(req, res, next) => {
+//     try {
+//         const results = await db.query(`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING code, name, description`, [req.body.code, req.body.name, req.body.description]);
+//         return res.status(201).json({ company: results.row[0] });
+//     } catch (err) {
+//         return next(err);
+//     }
+// });
 
 router.put('/:code', async(req, res, next) => {
     try {
         const { name, description } = req.body;
-        const results = await db.query(`UPDATE companies SET name=$1, type=$2 WHERE code=$3 RETURNING code, name, description`, [name, description, req.params.code]);
+        const { code } = req.params;
+        const results = await db.query(`UPDATE companies SET name=$1, description=$2 WHERE code=$3 RETURNING code, name, description`, [name, description, code]);
         return res.json(results.rows[0]);
     } catch (err) {
         return next(err);
