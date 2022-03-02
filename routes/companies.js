@@ -22,10 +22,10 @@ router.get('/:code', async(req, res, next) => {
         }
         // const { code, name, description } = cResults.row[0];
         // const { id, comp_code } = iResults.row[0];
-        const company = cResults.row[0];
-        const invoices = iResults.row[0];
-        company.invoices = invoices.rows.map(i => i.id);
-        return res.json({ company: code, name, description })
+        const company = cResults.rows[0];
+        const invoices = iResults.rows;
+        company.invoices = invoices.map(i => i.id);
+        return res.json({ company: cResults.rows[0] })
     } catch (e) {
         return next(e)
     }
