@@ -38,13 +38,15 @@ router.post("/", async(req, res, next) => {
     }
 })
 
-// router.post("/", async(req, res, next) => {
-//     try {
-
-//     } catch (e) {
-//         return next(e);
-//     }
-// })
+router.post("/", async(req, res, next) => {
+    try {
+        const { comp_code, in_code } = req.body;
+        const results = await db.query(`INSERT INTO companies_industries (comp_code, in_code) VALUES ($1, $2) RETURNING comp_code, in_code`, [comp_code, in_code]);
+        return res.json({ companies_industries: results.rows[0] });
+    } catch (e) {
+        return next(e);
+    }
+})
 
 
 module.exports = router;
