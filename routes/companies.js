@@ -32,7 +32,7 @@ router.get('/', async(req, res, next) => {
 //     }
 // });
 /** when viewing details for a company, you can see the names of the industries for that company
- * {company: {code, name, description, invoices:[id, ..], industries:[code, name]}}
+ * {"company":"ibm","name":"accounting","description":"Big blue.","industries":["accounting","finance","management","marketing"]}
  */
 router.get('/:code', async(req, res, next) => {
     try {
