@@ -26,14 +26,14 @@ CREATE TABLE invoices (
 );
 
 CREATE TABLE industries (
-  code  text PRIMARY KEY,
-  name text NOT NULL UNIQUE
+    code  text PRIMARY KEY,
+    name text NOT NULL UNIQUE
 );
 
 CREATE TABLE companies_industries (
-  comp_code text NOT NULL REFERENCES companies ON DELETE CASCADE,
-  in_code text NOT NULL REFERENCES industries ON DELETE CASCADE,
-  PRIMARY KEY(co_code, in_code)
+    comp_code text NOT NULL REFERENCES companies ON DELETE CASCADE,
+    in_code text NOT NULL REFERENCES industries ON DELETE CASCADE,
+    PRIMARY KEY (comp_code, in_code)
 );
 
 INSERT INTO companies
@@ -47,16 +47,16 @@ INSERT INTO invoices (comp_Code, amt, paid, paid_date)
          ('ibm', 400, false, null);
 
 INSERT INTO industries (code, name)
-VALUES ('acct', 'accounting'),
-('hr', 'human resources'),
-('fin', 'finance'),
-('mktg', 'marketing'),
-('mgt', 'management'),
-('qa', 'quality assurance'),
-('pr', 'public relations')
+  VALUES ('acct', 'accounting'),
+  ('hr', 'human resources'),
+  ('fin', 'finance'),
+  ('mktg', 'marketing'),
+  ('mgt', 'management'),
+  ('qa', 'quality assurance'),
+  ('pr', 'public relations');
 
-INSERT INTO companies_industries(comp_code, in_code)
-VALUES ('apple', 'mktg'),
+INSERT INTO companies_industries (comp_code, in_code)
+  VALUES ('apple', 'mktg'),
 ('ibm', 'acct'),
 ('apple', 'fin'),
 ('apple', 'qa'),
