@@ -11,23 +11,46 @@ router.get('/', async(req, res, next) => {
     } catch (e) {
         return next(e);
     }
-})
+});
+
+/** Get {company: {code, name, description}}  */
+
+// router.get('/:code', async(req, res, next) => {
+//     try {
+//         const { code } = req.params;
+//         const cResults = await db.query(`SELECT c.code, c.name, c.description FROM companies AS c WHERE c.code = $1`, [code]);
+//         const iResults = await db.query(`SELECT id FROM invoices WHERE comp_code = $1`, [code]);
+//         if (cResults.rows.length === 0) {
+//             throw new ExpressError(`Company: ${code} not found`, 404)
+//         }
+//         const company = cResults.rows[0];
+//         const invoices = iResults.rows;
+//         company.invoices = invoices.map(i => i.id);
+//         return res.json({ company: cResults.rows[0] })
+//     } catch (e) {
+//         return next(e)
+//     }
+// });
+/** when viewing details for a company, you can see the names of the industries for that company
+ * {company: {code, name, description, invoices:[id, ..], industries:[code, name]}}
+ */
 router.get('/:code', async(req, res, next) => {
     try {
         const { code } = req.params;
-        const cResults = await db.query(`SELECT c.code, c.name, c.description FROM companies AS c WHERE c.code = $1`, [code]);
-        const iResults = await db.query(`SELECT id FROM invoices WHERE comp_code = $1`, [code]);
-        if (cResults.rows.length === 0) {
+        const results = await db.query(`SELECT * FROM companies AS c 
+        LEFT JOIN companies_industries AS ci
+        LEFT JOIN industries as i ON i.code = ci.in_code
+        ON c.code = ci.comp_code
+        WHERE c.code = $1`, [code]);
+        console.log(results);
+        if (results.rows.length === 0) {
             throw new ExpressError(`Company: ${code} not found`, 404)
         }
-        // const { code, name, description } = cResults.row[0];
-        // const { id, comp_code } = iResults.row[0];
-        const company = cResults.rows[0];
-        const invoices = iResults.rows;
-        company.invoices = invoices.map(i => i.id);
-        return res.json({ company: cResults.rows[0] })
+        const { name, description } = results.rows[0];
+        const industries = results.rows.map(n => n.name);
+        return res.json({ company: code, name, description, industries })
     } catch (e) {
-        return next(e)
+        return next(e);
     }
 })
 
@@ -56,7 +79,7 @@ router.get('/:code', async(req, res, next) => {
 //         return next(e)
 //     }
 // })
-
+/** Adds a company */
 router.post('/', async(req, res, next) => {
     try {
         const { code, name, description } = req.body;
@@ -80,7 +103,7 @@ router.post('/', async(req, res, next) => {
 //         return next(err);
 //     }
 // });
-
+/** Edit existing company */
 router.put('/:code', async(req, res, next) => {
     try {
         const { name, description } = req.body;
@@ -92,6 +115,7 @@ router.put('/:code', async(req, res, next) => {
     }
 });
 
+/** Deletes company */
 router.delete('/:code', async(req, res, next) => {
     try {
         const results = db.query(`DELETE FROM companies WHERE code = $1`, [req.params.code]);

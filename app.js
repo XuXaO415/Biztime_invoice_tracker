@@ -7,6 +7,7 @@ const express = require("express");
 const ExpressError = require("./expressError");
 const cRoutes = require("./routes/companies");
 const iRoutes = require("./routes/invoices");
+const indRoutes = require("./routes/industries");
 const app = express();
 
 // Parse request bodies for JSON
